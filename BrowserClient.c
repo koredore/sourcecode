@@ -221,7 +221,7 @@ int ParseObject( char *FileName, char *hostAddress[], char *objectName[] )
     while( fgets(Temp,MAXCOL,response) != NULL) {
 
     if( ( pChar_0 = strstr( Temp, "src=\"http://" ) ) != NULL ) {
-      pChar_0 += 13;
+      pChar_0 += 12;
       
       if( ( pChar_1 = strchr( pChar_0, '/' ) ) != NULL ) {
 
