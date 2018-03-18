@@ -11,6 +11,13 @@
 #include <time.h>
 
 
+#define HTTP_PORT       80
+#define BUF_SIZ         1024
+#define LARGE_BUF_SIZ   20480
+#define TRUE    1
+#define FALSE   0
+#define MAXCOL 30000
+
 int MakeSocket( char *webAddress, int portNumber );
 void RunHTTPInteraction( char *webAddress);
 int SendGetReq( int sock, char *HostName, char *ObjectName );
@@ -18,11 +25,6 @@ void RecvResponse( int sock, char *FileName, char *HostName );
 int ParseObject( char *FileName, char *hostAddress[], char *objectName[] );
 
 
-#define HTTP_PORT       80
-#define BUF_SIZ         1024
-#define LARGE_BUF_SIZ   20480
-#define TRUE    1
-#define FALSE   0
 
 
 /////////////////////////main
@@ -76,12 +78,13 @@ void RunHTTPInteraction( char *webAddress )
   objectCounter = ParseObject( FileName, hostAddress, objectName ) ;
 
   if( objectCounter <= 0 ) return ;
-	printf( "=============objects=============\n");
-	printf(" the number of objects : %d\n", objectCounter);
+        
+  printf( "=============objects=============\n");
+  printf(" the number of objects : %d\n", objectCounter);
 	
-	for ( i= 0; i<objectCounter; i++){
-	printf ( "host : %s  , object : %s\n",hostAddress[i],objectName[i]);
-	}
+  for ( i= 0; i<objectCounter; i++){
+     printf ( "host : %s  , object : %s\n",hostAddress[i],objectName[i]);
+  }
 
   for( i = 0; i < objectCounter; i++ ) {
     free( hostAddress[i] );
@@ -168,12 +171,13 @@ void RecvResponse( int sock, char *FileName, char *hostName )
     perror( "open error" ) ;
     return;
   }
-
+  
+  chmod(FileName, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH);
   if( ( nbytes = read( sock, buf, BUF_SIZ ) ) < 0 ) {
     printf( "read error!\n" );
     return;
   }
-
+  buf[nbytes]='\0';
   strcpy( Temp, buf );
 
   *(strstr( Temp, "\r\n\r\n" )) = '\0';
@@ -212,7 +216,8 @@ int ParseObject( char *FileName, char *hostAddress[], char *objectName[] )
  
   if ( ( response = fopen(FileName,"rb") ) == NULL ) return -1;
 
-  while( fscanf( response, "%s", Temp) != EOF ){
+ /* while( fscanf( response, "%s", Temp) != EOF ){*/
+    while( fgets(Temp,MAXCOL,response) != NULL) {
 
     if( ( pChar_0 = strstr( Temp, "src=\"http://" ) ) != NULL ) {
       pChar_0 += 12;
@@ -244,4 +249,3 @@ int ParseObject( char *FileName, char *hostAddress[], char *objectName[] )
 
   return i;
 }
-
