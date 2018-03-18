@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <arpa/inet.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -36,7 +37,7 @@ int main( int argc, char** argv )
 	return 0;
 	}
 	else {	
-	printf(" usage : ./gen URL \n");	
+	printf(" usage : ./BrowserClient URL \n");	
 	}
 
 return 0;
@@ -220,7 +221,7 @@ int ParseObject( char *FileName, char *hostAddress[], char *objectName[] )
     while( fgets(Temp,MAXCOL,response) != NULL) {
 
     if( ( pChar_0 = strstr( Temp, "src=\"http://" ) ) != NULL ) {
-      pChar_0 += 12;
+      pChar_0 += 13;
       
       if( ( pChar_1 = strchr( pChar_0, '/' ) ) != NULL ) {
 
